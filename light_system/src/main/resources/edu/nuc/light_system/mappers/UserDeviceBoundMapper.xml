@@ -1,0 +1,205 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.nuc.light_system.mappers.UserDeviceBoundMapper">
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="edu.nuc.light_system.entity.po.UserDeviceBound">
+		<!--id-->
+		<id column="id" property="id"/>
+		<!--用户id-->
+		<result column="user_id" property="userId"/>
+		<!--设备id-->
+		<result column="device_id" property="deviceId"/>
+		<!--创建时间-->
+		<result column="create_time" property="createTime"/>
+	</resultMap>
+
+	<!--通用查询结果列-->
+	<sql id="base_column_list">
+		id,user_id,device_id,create_time
+	</sql>
+
+	<!--基础查询条件-->
+	<sql id="base_query_condition">
+		<if test="query.id != null">
+			and id = #{query.id}
+		</if>
+		<if test="query.userId != null and query.userId!=''">
+			and user_id = #{query.userId}
+		</if>
+		<if test="query.deviceId != null and query.deviceId!=''">
+			and device_id = #{query.deviceId}
+		</if>
+		<if test="query.createTime != null">
+			and create_time = #{query.createTime}
+		</if>
+	</sql>
+
+	<!--扩展查询条件-->
+	<sql id="base_query_condition_extend">
+		<if test="query.userIdFuzzy != null and query.userIdFuzzy !=''">
+			and user_id like concat('%',#{query.userIdFuzzy},'%')
+		</if>
+		<if test="query.deviceIdFuzzy != null and query.deviceIdFuzzy !=''">
+			and device_id like concat('%',#{query.deviceIdFuzzy},'%')
+		</if>
+		<if test="query.createTimeStart != null and query.createTimeStart !=''">
+			<![CDATA[ and create_time >= str_to_date(#{query.createTimeStart}, '%Y-%m-%d') ]]>
+		</if>
+		<if test="query.createTimeEnd != null and query.createTimeEnd !=''">
+			<![CDATA[ and create_time < date_sub(str_to_date(#{query.createTimeEnd}, '%Y-%m-%d'),interval -1 day) ]]>
+		</if>
+	</sql>
+
+	<!--扩展查询条件-->
+	<sql id="query_condition">
+		<where>
+			<include refid="base_query_condition"/>
+			<include refid="base_query_condition_extend"/>
+		</where>
+	</sql>
+
+	<!--查询列表-->
+	<select id="selectList" resultMap="base_result_map">
+		SELECT <include refid="base_column_list"/> FROM user_device_bound<include refid="query_condition"/>
+		<if test="query.orderBy!=null">order by ${query.orderBy}</if>
+		<if test="query.simplePage!=null">limit #{query.simplePage.start},#{query.simplePage.end}</if>
+	</select>
+
+	<!--查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer">
+		SELECT count(1) FROM user_device_bound <include refid="query_condition"/>
+	</select>
+
+	<!--插入(匹配有值的字段)-->
+	<insert id="insert" parameterType="edu.nuc.light_system.entity.po.UserDeviceBound">
+		<selectKey keyProperty="bean.id" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO user_device_bound
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.id !=null">
+				id,
+			</if>
+			<if test="bean.userId !=null">
+				user_id,
+			</if>
+			<if test="bean.deviceId !=null">
+				device_id,
+			</if>
+			<if test="bean.createTime !=null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.id!=null">
+				#{bean.id},
+			</if>
+			<if test="bean.userId!=null">
+				#{bean.userId},
+			</if>
+			<if test="bean.deviceId!=null">
+				#{bean.deviceId},
+			</if>
+			<if test="bean.createTime!=null">
+				#{bean.createTime},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 插入或更新(匹配有值的字段) -->
+	<insert id="insertOrUpdate" parameterType="edu.nuc.light_system.entity.po.UserDeviceBound">
+		INSERT INTO user_device_bound
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.id !=null">
+				id,
+			</if>
+			<if test="bean.userId !=null">
+				user_id,
+			</if>
+			<if test="bean.deviceId !=null">
+				device_id,
+			</if>
+			<if test="bean.createTime !=null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.id!=null">
+				#{bean.id},
+			</if>
+			<if test="bean.userId!=null">
+				#{bean.userId},
+			</if>
+			<if test="bean.deviceId!=null">
+				#{bean.deviceId},
+			</if>
+			<if test="bean.createTime!=null">
+				#{bean.createTime},
+			</if>
+		</trim>
+		on DUPLICATE key update
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.userId!=null">
+				user_id = VALUES(user_id),
+			</if>
+			<if test="bean.deviceId!=null">
+				device_id = VALUES(device_id),
+			</if>
+			<if test="bean.createTime!=null">
+				create_time = VALUES(create_time),
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 添加(批量插入) -->
+	<insert id="insertBatch" parameterType="edu.nuc.light_system.entity.po.UserDeviceBound">
+		INSERT INTO user_device_bound(user_id,device_id,create_time)values
+		<foreach collection="list" item="item" separator="," >
+			(#{item.userId},#{item.deviceId},#{item.createTime})
+		</foreach>
+	</insert>
+
+	<!-- 批量插入或更新(批量插入) -->
+	<insert id="insertOrUpdateBatch" parameterType="edu.nuc.light_system.entity.po.UserDeviceBound">
+		INSERT INTO user_device_bound(user_id,device_id,create_time)values
+		<foreach collection="list" item="item" separator="," >
+			(#{item.userId},#{item.deviceId},#{item.createTime})
+		</foreach>
+		on DUPLICATE key update
+		id = VALUES(id),user_id = VALUES(user_id),device_id = VALUES(device_id),create_time = VALUES(create_time)
+	</insert>
+
+	<!-- 根据Id查询-->
+	<select id="selectById" resultMap="base_result_map">
+		select <include refid="base_column_list"/>  from user_device_bound where id=#{id}
+	</select>
+
+	<!-- 根据Id更新-->
+	<update id="updateById" parameterType="edu.nuc.light_system.entity.po.UserDeviceBound">
+		update user_device_bound
+		<set>
+			<if test="bean.id != null">
+				id = #{bean.id},
+			</if>
+			<if test="bean.userId != null">
+				user_id = #{bean.userId},
+			</if>
+			<if test="bean.deviceId != null">
+				device_id = #{bean.deviceId},
+			</if>
+			<if test="bean.createTime != null">
+				create_time = #{bean.createTime},
+			</if>
+
+		</set>
+		where id=#{id}
+</update>
+
+
+	<!-- 根据Id删除-->
+	<delete id="deleteById">
+		delete from user_device_bound where id=#{id}
+</delete>
+
+</mapper>

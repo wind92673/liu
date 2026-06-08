@@ -1,0 +1,31 @@
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.w140 {
+  width: 140px;
+}
+
+.w160 {
+  width: 160px;
+}
+
+.w200 {
+  width: 200px;
+}
+
+.pager {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+

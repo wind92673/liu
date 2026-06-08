@@ -1,0 +1,353 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.nuc.light_system.mappers.SaveInfoMapper">
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="edu.nuc.light_system.entity.po.SaveInfo">
+		<!--自增id-->
+		<id column="id" property="id"/>
+		<!--设备id-->
+		<result column="device_id" property="deviceId"/>
+		<!--当前时间，精确到天-->
+		<result column="current_time" property="currentTime"/>
+		<!--当前小时-->
+		<result column="current_hour" property="currentHour"/>
+		<!--节电量-->
+		<result column="power" property="power"/>
+		<!--节碳量-->
+		<result column="carbon" property="carbon"/>
+	</resultMap>
+
+	<!--通用查询结果列-->
+	<sql id="base_column_list">
+		id,device_id,`current_time`,`current_hour`,power,carbon
+	</sql>
+
+	<!--基础查询条件-->
+	<sql id="base_query_condition">
+		<if test="query.id != null">
+			and id = #{query.id}
+		</if>
+		<if test="query.deviceId != null and query.deviceId!=''">
+			and device_id = #{query.deviceId}
+		</if>
+		<if test="query.currentTime != null">
+			and `current_time` = #{query.currentTime}
+		</if>
+		<if test="query.currentHour != null">
+			and `current_hour` = #{query.currentHour}
+		</if>
+		<if test="query.power != null and query.power!=''">
+			and power = #{query.power}
+		</if>
+		<if test="query.carbon != null and query.carbon!=''">
+			and carbon = #{query.carbon}
+		</if>
+	</sql>
+	<!--扩展查询条件-->
+	<sql id="base_query_condition_extend">
+		<if test="query.deviceIdFuzzy != null and query.deviceIdFuzzy !=''">
+			and device_id like concat('%',#{query.deviceIdFuzzy},'%')
+		</if>
+		<if test="query.currentTimeStart != null and query.currentTimeStart !=''">
+			<![CDATA[ and `current_time` >= str_to_date(#{query.currentTimeStart}, '%Y-%m-%d') ]]>
+		</if>
+		<if test="query.currentTimeEnd != null and query.currentTimeEnd !=''">
+			<![CDATA[ and `current_time` < date_sub(str_to_date(#{query.currentTimeEnd}, '%Y-%m-%d'),interval -1 day) ]]>
+		</if>
+		<if test="query.powerFuzzy != null and query.powerFuzzy !=''">
+			and power like concat('%',#{query.powerFuzzy},'%')
+		</if>
+		<if test="query.carbonFuzzy != null and query.carbonFuzzy !=''">
+			and carbon like concat('%',#{query.carbonFuzzy},'%')
+		</if>
+	</sql>
+
+	<!--扩展查询条件-->
+	<sql id="query_condition">
+		<where>
+			<include refid="base_query_condition"/>
+			<include refid="base_query_condition_extend"/>
+		</where>
+	</sql>
+
+	<!--查询列表-->
+	<select id="selectList" resultMap="base_result_map">
+		SELECT <include refid="base_column_list"/> FROM save_info<include refid="query_condition"/>
+		<if test="query.orderBy!=null">order by ${query.orderBy}</if>
+		<if test="query.simplePage!=null">limit #{query.simplePage.start},#{query.simplePage.end}</if>
+	</select>
+
+	<!--查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer">
+		SELECT count(1) FROM save_info <include refid="query_condition"/>
+	</select>
+
+	<!--插入(匹配有值的字段)-->
+	<insert id="insert" parameterType="edu.nuc.light_system.entity.po.SaveInfo">
+		INSERT INTO save_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.id !=null">
+				id,
+			</if>
+			<if test="bean.deviceId !=null">
+				device_id,
+			</if>
+			<if test="bean.currentTime !=null">
+				`current_time`,
+			</if>
+			<if test="bean.currentHour !=null">
+				`current_hour`,
+			</if>
+			<if test="bean.power !=null">
+				power,
+			</if>
+			<if test="bean.carbon !=null">
+				carbon,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.id!=null">
+				#{bean.id},
+			</if>
+			<if test="bean.deviceId!=null">
+				#{bean.deviceId},
+			</if>
+			<if test="bean.currentTime!=null">
+				#{bean.currentTime},
+			</if>
+			<if test="bean.currentHour!=null">
+				#{bean.currentHour},
+			</if>
+			<if test="bean.power!=null">
+				#{bean.power},
+			</if>
+			<if test="bean.carbon!=null">
+				#{bean.carbon},
+			</if>
+		</trim>
+	</insert>
+	<!-- 插入或更新(匹配有值的字段) -->
+	<insert id="insertOrUpdate" parameterType="edu.nuc.light_system.entity.po.SaveInfo">
+		INSERT INTO save_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.id !=null">
+				id,
+			</if>
+			<if test="bean.deviceId !=null">
+				device_id,
+			</if>
+			<if test="bean.currentTime !=null">
+				`current_time`,
+			</if>
+			<if test="bean.currentHour !=null">
+				`current_hour`,
+			</if>
+			<if test="bean.power !=null">
+				power,
+			</if>
+			<if test="bean.carbon !=null">
+				carbon,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.id!=null">
+				#{bean.id},
+			</if>
+			<if test="bean.deviceId!=null">
+				#{bean.deviceId},
+			</if>
+			<if test="bean.currentTime!=null">
+				#{bean.currentTime},
+			</if>
+			<if test="bean.currentHour!=null">
+				#{bean.currentHour},
+			</if>
+			<if test="bean.power!=null">
+				#{bean.power},
+			</if>
+			<if test="bean.carbon!=null">
+				#{bean.carbon},
+			</if>
+		</trim>
+		on DUPLICATE key update
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.deviceId!=null">
+				device_id = VALUES(device_id),
+			</if>
+			<if test="bean.currentTime!=null">
+				`current_time` = VALUES(`current_time`),
+			</if>
+			<if test="bean.currentHour!=null">
+				`current_hour` = VALUES(`current_hour`),
+			</if>
+			<if test="bean.power!=null">
+				power = VALUES(power),
+			</if>
+			<if test="bean.carbon!=null">
+				carbon = VALUES(carbon),
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 添加(批量插入) -->
+	<insert id="insertBatch" parameterType="edu.nuc.light_system.entity.po.SaveInfo">
+		INSERT INTO save_info(id,device_id,`current_time`,`current_hour`,power,carbon)values
+		<foreach collection="list" item="item" separator="," >
+			(#{item.id},#{item.deviceId},#{item.currentTime},#{item.currentHour},#{item.power},#{item.carbon})
+		</foreach>
+	</insert>
+
+	<!-- 批量插入或更新(批量插入) -->
+	<insert id="insertOrUpdateBatch" parameterType="edu.nuc.light_system.entity.po.SaveInfo">
+		INSERT INTO save_info(id,device_id,`current_time`,`current_hour`,power,carbon)values
+		<foreach collection="list" item="item" separator="," >
+			(#{item.id},#{item.deviceId},#{item.currentTime},#{item.currentHour},#{item.power},#{item.carbon})
+		</foreach>
+		on DUPLICATE key update
+		id = VALUES(id),device_id = VALUES(device_id),`current_time` = VALUES(`current_time`),`current_hour` = VALUES(`current_hour`),power = VALUES(power),carbon = VALUES(carbon)
+	</insert>
+
+	<!-- 根据Id查询-->
+	<select id="selectById" resultMap="base_result_map">
+		select <include refid="base_column_list"/> from save_info where id=#{id}
+	</select>
+
+	<!-- 根据Id更新-->
+	<update id="updateById" parameterType="edu.nuc.light_system.entity.po.SaveInfo">
+		update save_info
+		<set>
+			<if test="bean.id != null">
+				id = #{bean.id},
+			</if>
+			<if test="bean.deviceId != null">
+				device_id = #{bean.deviceId},
+			</if>
+			<if test="bean.currentTime != null">
+				`current_time` = #{bean.currentTime},
+			</if>
+			<if test="bean.currentHour != null">
+				`current_hour` = #{bean.currentHour},
+			</if>
+			<if test="bean.power != null">
+				power = #{bean.power},
+			</if>
+			<if test="bean.carbon != null">
+				carbon = #{bean.carbon},
+			</if>
+
+		</set>
+		where id=#{id}
+	</update>
+
+	<!-- 根据DeviceId查询-->
+	<select id="selectByDeviceId" resultMap="base_result_map">
+		select <include refid="base_column_list"/> from save_info where device_id=#{deviceId}
+	</select>
+
+	<!-- 根据DeviceId更新-->
+	<update id="updateByDeviceId" parameterType="edu.nuc.light_system.entity.po.SaveInfo">
+		update save_info
+		<set>
+			<if test="bean.id != null">
+				id = #{bean.id},
+			</if>
+			<if test="bean.currentTime != null">
+				`current_time` = #{bean.currentTime},
+			</if>
+			<if test="bean.currentHour != null">
+				`current_hour` = #{bean.currentHour},
+			</if>
+			<if test="bean.power != null">
+				power = #{bean.power},
+			</if>
+			<if test="bean.carbon != null">
+				carbon = #{bean.carbon},
+			</if>
+		</set>
+		where device_id=#{deviceId}
+	</update>
+
+	<!-- 根据DeviceId、时间和小时更新（用于累加节能数据）-->
+	<update id="updateByDeviceIdAndTime" parameterType="edu.nuc.light_system.entity.po.SaveInfo">
+		update save_info
+		<set>
+			<if test="bean.power != null">
+				power = #{bean.power},
+			</if>
+			<if test="bean.carbon != null">
+				carbon = #{bean.carbon},
+			</if>
+		</set>
+		where device_id=#{deviceId}
+		and `current_time`=#{currentTime}
+		and `current_hour`=#{currentHour}
+	</update>
+
+	<!-- 按天查询所有记录 -->
+	<select id="selectListByDay" resultMap="base_result_map">
+		SELECT <include refid="base_column_list"/> FROM save_info
+		<where>
+			<if test="query.deviceId != null and query.deviceId!=''">
+				and device_id = #{query.deviceId}
+			</if>
+			<if test="query.currentTime != null">
+				and `current_time` = #{query.currentTime}
+			</if>
+		</where>
+		order by `current_time`, `current_hour`
+	</select>
+
+	<!-- 按月汇总查询（按天累加） -->
+	<select id="selectMonthlySummary" resultType="java.util.HashMap">
+		SELECT
+		DATE_FORMAT(`current_time`, '%Y-%m-%d') as date,
+		SUM(CAST(power AS DECIMAL(10,2))) as total_power,
+		SUM(CAST(carbon AS DECIMAL(10,2))) as total_carbon
+		FROM save_info
+		<where>
+			<if test="query.deviceId != null and query.deviceId!=''">
+				and device_id = #{query.deviceId}
+			</if>
+			<if test="query.year != null">
+				and YEAR(`current_time`) = #{query.year}
+			</if>
+			<if test="query.month != null">
+				and MONTH(`current_time`) = #{query.month}
+			</if>
+			<if test="query.currentTimeStart != null and query.currentTimeStart !=''">
+				<![CDATA[ and `current_time` >= str_to_date(#{query.currentTimeStart}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.currentTimeEnd != null and query.currentTimeEnd !=''">
+				<![CDATA[ and `current_time` < date_sub(str_to_date(#{query.currentTimeEnd}, '%Y-%m-%d'),interval -1 day) ]]>
+			</if>
+		</where>
+		GROUP BY DATE_FORMAT(`current_time`, '%Y-%m-%d')
+		ORDER BY date
+	</select>
+
+	<!-- 按年汇总查询（按月累加） -->
+	<select id="selectYearlySummary" resultType="java.util.HashMap">
+		SELECT
+		DATE_FORMAT(`current_time`, '%Y-%m') as month,
+		SUM(CAST(power AS DECIMAL(10,2))) as total_power,
+		SUM(CAST(carbon AS DECIMAL(10,2))) as total_carbon
+		FROM save_info
+		<where>
+			<if test="query.deviceId != null and query.deviceId!=''">
+				and device_id = #{query.deviceId}
+			</if>
+			<if test="query.year != null">
+				and YEAR(`current_time`) = #{query.year}
+			</if>
+			<if test="query.currentTimeStart != null and query.currentTimeStart !=''">
+				<![CDATA[ and `current_time` >= str_to_date(#{query.currentTimeStart}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.currentTimeEnd != null and query.currentTimeEnd !=''">
+				<![CDATA[ and `current_time` < date_sub(str_to_date(#{query.currentTimeEnd}, '%Y-%m-%d'),interval -1 day) ]]>
+			</if>
+		</where>
+		GROUP BY DATE_FORMAT(`current_time`, '%Y-%m')
+		ORDER BY month
+	</select>
+</mapper>

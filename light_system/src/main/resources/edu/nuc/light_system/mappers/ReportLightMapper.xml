@@ -1,0 +1,271 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.nuc.light_system.mappers.ReportLightMapper">
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="edu.nuc.light_system.entity.po.ReportLight">
+		<!--自增id-->
+		<id column="id" property="id"/>
+		<!--设备id-->
+		<result column="device_id" property="deviceId"/>
+		<!--灯光状态-->
+		<result column="light_state" property="lightState"/>
+		<!--灯光亮度-->
+		<result column="bright_ness" property="brightNess"/>
+		<!--环境亮度-->
+		<result column="ambient_light" property="ambientLight"/>
+		<!--当前小时，0-23-->
+		<result column="current_hour" property="currentHour"/>
+		<!--上报时间-->
+		<result column="report_time" property="reportTime"/>
+	</resultMap>
+
+	<!--通用查询结果列-->
+	<sql id="base_column_list">
+		id,device_id,light_state,bright_ness,ambient_light,current_hour,report_time
+	</sql>
+
+	<!--基础查询条件-->
+	<sql id="base_query_condition">
+		<if test="query.id != null">
+			and id = #{query.id}
+		</if>
+		<if test="query.deviceId != null and query.deviceId!=''">
+			and device_id = #{query.deviceId}
+		</if>
+		<if test="query.lightState != null">
+			and light_state = #{query.lightState}
+		</if>
+		<if test="query.brightNess != null">
+			and bright_ness = #{query.brightNess}
+		</if>
+		<if test="query.ambientLight != null">
+			and ambient_light = #{query.ambientLight}
+		</if>
+		<if test="query.currentHour != null">
+			and current_hour = #{query.currentHour}
+		</if>
+		<if test="query.reportTime != null">
+			and report_time = #{query.reportTime}
+		</if>
+	</sql>
+
+	<!--扩展查询条件-->
+	<sql id="base_query_condition_extend">
+		<if test="query.deviceIdFuzzy != null and query.deviceIdFuzzy !=''">
+			and device_id like concat('%',#{query.deviceIdFuzzy},'%')
+		</if>
+		<if test="query.reportTimeStart != null and query.reportTimeStart !=''">
+			<![CDATA[ and report_time >= str_to_date(#{query.reportTimeStart}, '%Y-%m-%d') ]]>
+		</if>
+		<if test="query.reportTimeEnd != null and query.reportTimeEnd !=''">
+			<![CDATA[ and report_time < date_sub(str_to_date(#{query.reportTimeEnd}, '%Y-%m-%d'),interval -1 day) ]]>
+		</if>
+	</sql>
+
+	<!--扩展查询条件-->
+	<sql id="query_condition">
+		<where>
+			<include refid="base_query_condition"/>
+			<include refid="base_query_condition_extend"/>
+		</where>
+	</sql>
+
+	<!--查询列表-->
+	<select id="selectList" resultMap="base_result_map">
+		SELECT <include refid="base_column_list"/> FROM report_light<include refid="query_condition"/>
+		<if test="query.orderBy!=null">order by ${query.orderBy}</if>
+		<if test="query.simplePage!=null">limit #{query.simplePage.start},#{query.simplePage.end}</if>
+	</select>
+
+	<!--查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer">
+		SELECT count(1) FROM report_light <include refid="query_condition"/>
+	</select>
+
+	<!--插入(匹配有值的字段)-->
+	<insert id="insert" parameterType="edu.nuc.light_system.entity.po.ReportLight">
+		<selectKey keyProperty="bean.id" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO report_light
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.id !=null">
+				id,
+			</if>
+			<if test="bean.deviceId !=null">
+				device_id,
+			</if>
+			<if test="bean.lightState !=null">
+				light_state,
+			</if>
+			<if test="bean.brightNess !=null">
+				bright_ness,
+			</if>
+			<if test="bean.ambientLight !=null">
+				ambient_light,
+			</if>
+			<if test="bean.currentHour !=null">
+				current_hour,
+			</if>
+			<if test="bean.reportTime !=null">
+				report_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.id!=null">
+				#{bean.id},
+			</if>
+			<if test="bean.deviceId!=null">
+				#{bean.deviceId},
+			</if>
+			<if test="bean.lightState!=null">
+				#{bean.lightState},
+			</if>
+			<if test="bean.brightNess!=null">
+				#{bean.brightNess},
+			</if>
+			<if test="bean.ambientLight!=null">
+				#{bean.ambientLight},
+			</if>
+			<if test="bean.currentHour!=null">
+				#{bean.currentHour},
+			</if>
+			<if test="bean.reportTime!=null">
+				#{bean.reportTime},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 插入或更新(匹配有值的字段) -->
+	<insert id="insertOrUpdate" parameterType="edu.nuc.light_system.entity.po.ReportLight">
+		INSERT INTO report_light
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.id !=null">
+				id,
+			</if>
+			<if test="bean.deviceId !=null">
+				device_id,
+			</if>
+			<if test="bean.lightState !=null">
+				light_state,
+			</if>
+			<if test="bean.brightNess !=null">
+				bright_ness,
+			</if>
+			<if test="bean.ambientLight !=null">
+				ambient_light,
+			</if>
+			<if test="bean.currentHour !=null">
+				current_hour,
+			</if>
+			<if test="bean.reportTime !=null">
+				report_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.id!=null">
+				#{bean.id},
+			</if>
+			<if test="bean.deviceId!=null">
+				#{bean.deviceId},
+			</if>
+			<if test="bean.lightState!=null">
+				#{bean.lightState},
+			</if>
+			<if test="bean.brightNess!=null">
+				#{bean.brightNess},
+			</if>
+			<if test="bean.ambientLight!=null">
+				#{bean.ambientLight},
+			</if>
+			<if test="bean.currentHour!=null">
+				#{bean.currentHour},
+			</if>
+			<if test="bean.reportTime!=null">
+				#{bean.reportTime},
+			</if>
+		</trim>
+		on DUPLICATE key update
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.deviceId!=null">
+				device_id = VALUES(device_id),
+			</if>
+			<if test="bean.lightState!=null">
+				light_state = VALUES(light_state),
+			</if>
+			<if test="bean.brightNess!=null">
+				bright_ness = VALUES(bright_ness),
+			</if>
+			<if test="bean.ambientLight!=null">
+				ambient_light = VALUES(ambient_light),
+			</if>
+			<if test="bean.currentHour!=null">
+				current_hour = VALUES(current_hour),
+			</if>
+			<if test="bean.reportTime!=null">
+				report_time = VALUES(report_time),
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 添加(批量插入) -->
+	<insert id="insertBatch" parameterType="edu.nuc.light_system.entity.po.ReportLight">
+		INSERT INTO report_light(device_id,light_state,bright_ness,ambient_light,current_hour,report_time)values
+		<foreach collection="list" item="item" separator="," >
+			(#{item.deviceId},#{item.lightState},#{item.brightNess},#{item.ambientLight},#{item.currentHour},#{item.reportTime})
+		</foreach>
+	</insert>
+
+	<!-- 批量插入或更新(批量插入) -->
+	<insert id="insertOrUpdateBatch" parameterType="edu.nuc.light_system.entity.po.ReportLight">
+		INSERT INTO report_light(device_id,light_state,bright_ness,ambient_light,current_hour,report_time)values
+		<foreach collection="list" item="item" separator="," >
+			(#{item.deviceId},#{item.lightState},#{item.brightNess},#{item.ambientLight},#{item.currentHour},#{item.reportTime})
+		</foreach>
+		on DUPLICATE key update
+		id = VALUES(id),device_id = VALUES(device_id),light_state = VALUES(light_state),bright_ness = VALUES(bright_ness),ambient_light = VALUES(ambient_light),current_hour = VALUES(current_hour),report_time = VALUES(report_time)
+	</insert>
+
+	<!-- 根据Id查询-->
+	<select id="selectById" resultMap="base_result_map">
+		select <include refid="base_column_list"/>  from report_light where id=#{id}
+	</select>
+
+	<!-- 根据Id更新-->
+	<update id="updateById" parameterType="edu.nuc.light_system.entity.po.ReportLight">
+		update report_light
+		<set>
+			<if test="bean.id != null">
+				id = #{bean.id},
+			</if>
+			<if test="bean.deviceId != null">
+				device_id = #{bean.deviceId},
+			</if>
+			<if test="bean.lightState != null">
+				light_state = #{bean.lightState},
+			</if>
+			<if test="bean.brightNess != null">
+				bright_ness = #{bean.brightNess},
+			</if>
+			<if test="bean.ambientLight != null">
+				ambient_light = #{bean.ambientLight},
+			</if>
+			<if test="bean.currentHour != null">
+				current_hour = #{bean.currentHour},
+			</if>
+			<if test="bean.reportTime != null">
+				report_time = #{bean.reportTime},
+			</if>
+
+		</set>
+		where id=#{id}
+</update>
+
+
+	<!-- 根据Id删除-->
+	<delete id="deleteById">
+		delete from report_light where id=#{id}
+</delete>
+
+</mapper>

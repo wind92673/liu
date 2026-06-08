@@ -1,0 +1,283 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.nuc.light_system.mappers.WarnOrderMapper">
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="edu.nuc.light_system.entity.po.WarnOrder">
+		<!--自增id-->
+		<id column="id" property="id"/>
+		<!--设备id-->
+		<result column="device_id" property="deviceId"/>
+		<!--告警信息-->
+		<result column="report_info" property="reportInfo"/>
+		<!--告警时间-->
+		<result column="report_time" property="reportTime"/>
+		<!--处理人员id-->
+		<result column="user_id" property="userId"/>
+		<!--是否处理，0：未处理，1：已处理-->
+		<result column="state" property="state"/>
+		<!--处理时间-->
+		<result column="repair_time" property="repairTime"/>
+	</resultMap>
+
+	<!--通用查询结果列-->
+	<sql id="base_column_list">
+		id,device_id,report_info,report_time,user_id,state,repair_time
+	</sql>
+
+	<!--基础查询条件-->
+	<sql id="base_query_condition">
+		<if test="query.id != null">
+			and id = #{query.id}
+		</if>
+		<if test="query.deviceId != null and query.deviceId!=''">
+			and device_id = #{query.deviceId}
+		</if>
+		<if test="query.reportInfo != null and query.reportInfo!=''">
+			and report_info = #{query.reportInfo}
+		</if>
+		<if test="query.reportTime != null">
+			and report_time = #{query.reportTime}
+		</if>
+		<if test="query.userId != null and query.userId!=''">
+			and user_id = #{query.userId}
+		</if>
+		<if test="query.state != null">
+			and state = #{query.state}
+		</if>
+		<if test="query.repairTime != null">
+			and repair_time = #{query.repairTime}
+		</if>
+	</sql>
+
+	<!--扩展查询条件-->
+	<sql id="base_query_condition_extend">
+		<if test="query.deviceIdFuzzy != null and query.deviceIdFuzzy !=''">
+			and device_id like concat('%',#{query.deviceIdFuzzy},'%')
+		</if>
+		<if test="query.reportInfoFuzzy != null and query.reportInfoFuzzy !=''">
+			and report_info like concat('%',#{query.reportInfoFuzzy},'%')
+		</if>
+		<if test="query.reportTimeStart != null and query.reportTimeStart !=''">
+			<![CDATA[ and report_time >= str_to_date(#{query.reportTimeStart}, '%Y-%m-%d') ]]>
+		</if>
+		<if test="query.reportTimeEnd != null and query.reportTimeEnd !=''">
+			<![CDATA[ and report_time < date_sub(str_to_date(#{query.reportTimeEnd}, '%Y-%m-%d'),interval -1 day) ]]>
+		</if>
+		<if test="query.userIdFuzzy != null and query.userIdFuzzy !=''">
+			and user_id like concat('%',#{query.userIdFuzzy},'%')
+		</if>
+		<if test="query.repairTimeStart != null and query.repairTimeStart !=''">
+			<![CDATA[ and repair_time >= str_to_date(#{query.repairTimeStart}, '%Y-%m-%d') ]]>
+		</if>
+		<if test="query.repairTimeEnd != null and query.repairTimeEnd !=''">
+			<![CDATA[ and repair_time < date_sub(str_to_date(#{query.repairTimeEnd}, '%Y-%m-%d'),interval -1 day) ]]>
+		</if>
+	</sql>
+
+	<!--扩展查询条件-->
+	<sql id="query_condition">
+		<where>
+			<include refid="base_query_condition"/>
+			<include refid="base_query_condition_extend"/>
+		</where>
+	</sql>
+
+	<!--查询列表-->
+	<select id="selectList" resultMap="base_result_map">
+		SELECT <include refid="base_column_list"/> FROM warn_order<include refid="query_condition"/>
+		<if test="query.orderBy!=null">order by ${query.orderBy}</if>
+		<if test="query.simplePage!=null">limit #{query.simplePage.start},#{query.simplePage.end}</if>
+	</select>
+
+	<!--查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer">
+		SELECT count(1) FROM warn_order <include refid="query_condition"/>
+	</select>
+
+	<!--插入(匹配有值的字段)-->
+	<insert id="insert" parameterType="edu.nuc.light_system.entity.po.WarnOrder">
+		<selectKey keyProperty="bean.id" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO warn_order
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.id !=null">
+				id,
+			</if>
+			<if test="bean.deviceId !=null">
+				device_id,
+			</if>
+			<if test="bean.reportInfo !=null">
+				report_info,
+			</if>
+			<if test="bean.reportTime !=null">
+				report_time,
+			</if>
+			<if test="bean.userId !=null">
+				user_id,
+			</if>
+			<if test="bean.state !=null">
+				state,
+			</if>
+			<if test="bean.repairTime !=null">
+				repair_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.id!=null">
+				#{bean.id},
+			</if>
+			<if test="bean.deviceId!=null">
+				#{bean.deviceId},
+			</if>
+			<if test="bean.reportInfo!=null">
+				#{bean.reportInfo},
+			</if>
+			<if test="bean.reportTime!=null">
+				#{bean.reportTime},
+			</if>
+			<if test="bean.userId!=null">
+				#{bean.userId},
+			</if>
+			<if test="bean.state!=null">
+				#{bean.state},
+			</if>
+			<if test="bean.repairTime!=null">
+				#{bean.repairTime},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 插入或更新(匹配有值的字段) -->
+	<insert id="insertOrUpdate" parameterType="edu.nuc.light_system.entity.po.WarnOrder">
+		INSERT INTO warn_order
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.id !=null">
+				id,
+			</if>
+			<if test="bean.deviceId !=null">
+				device_id,
+			</if>
+			<if test="bean.reportInfo !=null">
+				report_info,
+			</if>
+			<if test="bean.reportTime !=null">
+				report_time,
+			</if>
+			<if test="bean.userId !=null">
+				user_id,
+			</if>
+			<if test="bean.state !=null">
+				state,
+			</if>
+			<if test="bean.repairTime !=null">
+				repair_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.id!=null">
+				#{bean.id},
+			</if>
+			<if test="bean.deviceId!=null">
+				#{bean.deviceId},
+			</if>
+			<if test="bean.reportInfo!=null">
+				#{bean.reportInfo},
+			</if>
+			<if test="bean.reportTime!=null">
+				#{bean.reportTime},
+			</if>
+			<if test="bean.userId!=null">
+				#{bean.userId},
+			</if>
+			<if test="bean.state!=null">
+				#{bean.state},
+			</if>
+			<if test="bean.repairTime!=null">
+				#{bean.repairTime},
+			</if>
+		</trim>
+		on DUPLICATE key update
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.deviceId!=null">
+				device_id = VALUES(device_id),
+			</if>
+			<if test="bean.reportInfo!=null">
+				report_info = VALUES(report_info),
+			</if>
+			<if test="bean.reportTime!=null">
+				report_time = VALUES(report_time),
+			</if>
+			<if test="bean.userId!=null">
+				user_id = VALUES(user_id),
+			</if>
+			<if test="bean.state!=null">
+				state = VALUES(state),
+			</if>
+			<if test="bean.repairTime!=null">
+				repair_time = VALUES(repair_time),
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 添加(批量插入) -->
+	<insert id="insertBatch" parameterType="edu.nuc.light_system.entity.po.WarnOrder">
+		INSERT INTO warn_order(device_id,report_info,report_time,user_id,state,repair_time)values
+		<foreach collection="list" item="item" separator="," >
+			(#{item.deviceId},#{item.reportInfo},#{item.reportTime},#{item.userId},#{item.state},#{item.repairTime})
+		</foreach>
+	</insert>
+
+	<!-- 批量插入或更新(批量插入) -->
+	<insert id="insertOrUpdateBatch" parameterType="edu.nuc.light_system.entity.po.WarnOrder">
+		INSERT INTO warn_order(device_id,report_info,report_time,user_id,state,repair_time)values
+		<foreach collection="list" item="item" separator="," >
+			(#{item.deviceId},#{item.reportInfo},#{item.reportTime},#{item.userId},#{item.state},#{item.repairTime})
+		</foreach>
+		on DUPLICATE key update
+		id = VALUES(id),device_id = VALUES(device_id),report_info = VALUES(report_info),report_time = VALUES(report_time),user_id = VALUES(user_id),state = VALUES(state),repair_time = VALUES(repair_time)
+	</insert>
+
+	<!-- 根据Id查询-->
+	<select id="selectById" resultMap="base_result_map">
+		select <include refid="base_column_list"/>  from warn_order where id=#{id}
+	</select>
+
+	<!-- 根据Id更新-->
+	<update id="updateById" parameterType="edu.nuc.light_system.entity.po.WarnOrder">
+		update warn_order
+		<set>
+			<if test="bean.id != null">
+				id = #{bean.id},
+			</if>
+			<if test="bean.deviceId != null">
+				device_id = #{bean.deviceId},
+			</if>
+			<if test="bean.reportInfo != null">
+				report_info = #{bean.reportInfo},
+			</if>
+			<if test="bean.reportTime != null">
+				report_time = #{bean.reportTime},
+			</if>
+			<if test="bean.userId != null">
+				user_id = #{bean.userId},
+			</if>
+			<if test="bean.state != null">
+				state = #{bean.state},
+			</if>
+			<if test="bean.repairTime != null">
+				repair_time = #{bean.repairTime},
+			</if>
+
+		</set>
+		where id=#{id}
+</update>
+
+
+	<!-- 根据Id删除-->
+	<delete id="deleteById">
+		delete from warn_order where id=#{id}
+</delete>
+
+</mapper>

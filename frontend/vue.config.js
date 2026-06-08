@@ -1,0 +1,15 @@
+module.exports = {
+  devServer: {
+    port: 8081,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8082',
+        changeOrigin: true
+      },
+      '/uploads': {
+        target: 'http://localhost:8082',
+        changeOrigin: true
+      }
+    }
+  }
+};

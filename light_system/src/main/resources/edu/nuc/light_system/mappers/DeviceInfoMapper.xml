@@ -1,0 +1,265 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.nuc.light_system.mappers.DeviceInfoMapper">
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="edu.nuc.light_system.entity.po.DeviceInfo">
+		<!--设备主键-->
+		<id column="device_id" property="deviceId"/>
+		<!--运行状态-->
+		<result column="system_mode" property="systemMode"/>
+		<!--光照阈值-->
+		<result column="light_threshold" property="lightThreshold"/>
+		<!--白天开始时间-->
+		<result column="day_start" property="dayStart"/>
+		<!--夜晚开始时间-->
+		<result column="day_end" property="dayEnd"/>
+		<!--在线状态，0：在线，1：离线-->
+		<result column="online" property="online"/>
+		<!--上报间隔-->
+		<result column="report_interval" property="reportInterval"/>
+	</resultMap>
+
+	<!--通用查询结果列-->
+	<sql id="base_column_list">
+		device_id,system_mode,light_threshold,day_start,day_end,online,report_interval
+	</sql>
+
+	<!--基础查询条件-->
+	<sql id="base_query_condition">
+		<if test="query.deviceId != null and query.deviceId!=''">
+			and device_id = #{query.deviceId}
+		</if>
+		<if test="query.systemMode != null and query.systemMode!=''">
+			and system_mode = #{query.systemMode}
+		</if>
+		<if test="query.lightThreshold != null">
+			and light_threshold = #{query.lightThreshold}
+		</if>
+		<if test="query.dayStart != null">
+			and day_start = #{query.dayStart}
+		</if>
+		<if test="query.dayEnd != null">
+			and day_end = #{query.dayEnd}
+		</if>
+		<if test="query.online != null">
+			and online = #{query.online}
+		</if>
+		<if test="query.reportInterval != null">
+			and report_interval = #{query.reportInterval}
+		</if>
+	</sql>
+
+	<!--扩展查询条件-->
+	<sql id="base_query_condition_extend">
+		<if test="query.deviceIdFuzzy != null and query.deviceIdFuzzy !=''">
+			and device_id like concat('%',#{query.deviceIdFuzzy},'%')
+		</if>
+		<if test="query.systemModeFuzzy != null and query.systemModeFuzzy !=''">
+			and system_mode like concat('%',#{query.systemModeFuzzy},'%')
+		</if>
+	</sql>
+
+	<!--扩展查询条件-->
+	<sql id="query_condition">
+		<where>
+			<include refid="base_query_condition"/>
+			<include refid="base_query_condition_extend"/>
+		</where>
+	</sql>
+
+	<!--查询列表-->
+	<select id="selectList" resultMap="base_result_map">
+		SELECT <include refid="base_column_list"/> FROM device_info<include refid="query_condition"/>
+		<if test="query.orderBy!=null">order by ${query.orderBy}</if>
+		<if test="query.simplePage!=null">limit #{query.simplePage.start},#{query.simplePage.end}</if>
+	</select>
+
+	<!--查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer">
+		SELECT count(1) FROM device_info <include refid="query_condition"/>
+	</select>
+
+	<!--插入(匹配有值的字段)-->
+	<insert id="insert" parameterType="edu.nuc.light_system.entity.po.DeviceInfo">
+		INSERT INTO device_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.deviceId !=null">
+				device_id,
+			</if>
+			<if test="bean.systemMode !=null">
+				system_mode,
+			</if>
+			<if test="bean.lightThreshold !=null">
+				light_threshold,
+			</if>
+			<if test="bean.dayStart !=null">
+				day_start,
+			</if>
+			<if test="bean.dayEnd !=null">
+				day_end,
+			</if>
+			<if test="bean.online !=null">
+				online,
+			</if>
+			<if test="bean.reportInterval !=null">
+				report_interval,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.deviceId!=null">
+				#{bean.deviceId},
+			</if>
+			<if test="bean.systemMode!=null">
+				#{bean.systemMode},
+			</if>
+			<if test="bean.lightThreshold!=null">
+				#{bean.lightThreshold},
+			</if>
+			<if test="bean.dayStart!=null">
+				#{bean.dayStart},
+			</if>
+			<if test="bean.dayEnd!=null">
+				#{bean.dayEnd},
+			</if>
+			<if test="bean.online!=null">
+				#{bean.online},
+			</if>
+			<if test="bean.reportInterval!=null">
+				#{bean.reportInterval},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 插入或更新(匹配有值的字段) -->
+	<insert id="insertOrUpdate" parameterType="edu.nuc.light_system.entity.po.DeviceInfo">
+		INSERT INTO device_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.deviceId !=null">
+				device_id,
+			</if>
+			<if test="bean.systemMode !=null">
+				system_mode,
+			</if>
+			<if test="bean.lightThreshold !=null">
+				light_threshold,
+			</if>
+			<if test="bean.dayStart !=null">
+				day_start,
+			</if>
+			<if test="bean.dayEnd !=null">
+				day_end,
+			</if>
+			<if test="bean.online !=null">
+				online,
+			</if>
+			<if test="bean.reportInterval !=null">
+				report_interval,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.deviceId!=null">
+				#{bean.deviceId},
+			</if>
+			<if test="bean.systemMode!=null">
+				#{bean.systemMode},
+			</if>
+			<if test="bean.lightThreshold!=null">
+				#{bean.lightThreshold},
+			</if>
+			<if test="bean.dayStart!=null">
+				#{bean.dayStart},
+			</if>
+			<if test="bean.dayEnd!=null">
+				#{bean.dayEnd},
+			</if>
+			<if test="bean.online!=null">
+				#{bean.online},
+			</if>
+			<if test="bean.reportInterval!=null">
+				#{bean.reportInterval},
+			</if>
+		</trim>
+		on DUPLICATE key update
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.systemMode!=null">
+				system_mode = VALUES(system_mode),
+			</if>
+			<if test="bean.lightThreshold!=null">
+				light_threshold = VALUES(light_threshold),
+			</if>
+			<if test="bean.dayStart!=null">
+				day_start = VALUES(day_start),
+			</if>
+			<if test="bean.dayEnd!=null">
+				day_end = VALUES(day_end),
+			</if>
+			<if test="bean.online!=null">
+				online = VALUES(online),
+			</if>
+			<if test="bean.reportInterval!=null">
+				report_interval = VALUES(report_interval),
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 添加(批量插入) -->
+	<insert id="insertBatch" parameterType="edu.nuc.light_system.entity.po.DeviceInfo">
+		INSERT INTO device_info(device_id,system_mode,light_threshold,day_start,day_end,online,report_interval)values
+		<foreach collection="list" item="item" separator="," >
+			(#{item.deviceId},#{item.systemMode},#{item.lightThreshold},#{item.dayStart},#{item.dayEnd},#{item.online},#{item.reportInterval})
+		</foreach>
+	</insert>
+
+	<!-- 批量插入或更新(批量插入) -->
+	<insert id="insertOrUpdateBatch" parameterType="edu.nuc.light_system.entity.po.DeviceInfo">
+		INSERT INTO device_info(device_id,system_mode,light_threshold,day_start,day_end,online,report_interval)values
+		<foreach collection="list" item="item" separator="," >
+			(#{item.deviceId},#{item.systemMode},#{item.lightThreshold},#{item.dayStart},#{item.dayEnd},#{item.online},#{item.reportInterval})
+		</foreach>
+		on DUPLICATE key update
+		device_id = VALUES(device_id),system_mode = VALUES(system_mode),light_threshold = VALUES(light_threshold),day_start = VALUES(day_start),day_end = VALUES(day_end),online = VALUES(online),report_interval = VALUES(report_interval)
+	</insert>
+
+	<!-- 根据DeviceId查询-->
+	<select id="selectByDeviceId" resultMap="base_result_map">
+		select <include refid="base_column_list"/>  from device_info where device_id=#{deviceId}
+	</select>
+
+	<!-- 根据DeviceId更新-->
+	<update id="updateByDeviceId" parameterType="edu.nuc.light_system.entity.po.DeviceInfo">
+		update device_info
+		<set>
+			<if test="bean.deviceId != null">
+				device_id = #{bean.deviceId},
+			</if>
+			<if test="bean.systemMode != null">
+				system_mode = #{bean.systemMode},
+			</if>
+			<if test="bean.lightThreshold != null">
+				light_threshold = #{bean.lightThreshold},
+			</if>
+			<if test="bean.dayStart != null">
+				day_start = #{bean.dayStart},
+			</if>
+			<if test="bean.dayEnd != null">
+				day_end = #{bean.dayEnd},
+			</if>
+			<if test="bean.online != null">
+				online = #{bean.online},
+			</if>
+			<if test="bean.reportInterval != null">
+				report_interval = #{bean.reportInterval},
+			</if>
+
+		</set>
+		where device_id=#{deviceId}
+</update>
+
+
+	<!-- 根据DeviceId删除-->
+	<delete id="deleteByDeviceId">
+		delete from device_info where device_id=#{deviceId}
+</delete>
+
+</mapper>

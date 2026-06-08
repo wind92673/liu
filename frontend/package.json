@@ -1,0 +1,23 @@
+{
+  "name": "zb27-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "axios": "0.27.2",
+    "core-js": "3.8.3",
+    "element-ui": "2.15.14",
+    "vue": "2.6.14",
+    "vue-router": "3.5.4"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "4.5.19",
+    "vue-template-compiler": "2.6.14"
+  },
+  "engines": {
+    "node": "12.22.12"
+  }
+}

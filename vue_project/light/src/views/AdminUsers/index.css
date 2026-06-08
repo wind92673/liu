@@ -1,0 +1,40 @@
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.w160 {
+  width: 160px;
+}
+
+.w200 {
+  width: 200px;
+}
+
+.pager {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.bind-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.bind-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
